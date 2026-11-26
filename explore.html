@@ -42,9 +42,9 @@ h1{font-size:clamp(2rem,5vw,3.25rem);letter-spacing:-.06em;margin:36px 0 6px}.su
 <div class="controls">
 <div class="control"><div class="length-head"><label for="duration">◷ Length</label><strong id="duration-value">8s</strong></div><input class="range" id="duration" type="range" min="5" max="30" step="1" value="8"><div class="range-labels"><span>5s</span><span>30s</span></div></div>
 <div class="control"><label>▣ Quality</label><div class="quality-options" role="group" aria-label="Video quality">
-<button class="quality-option" type="button" data-quality="480p" data-credits="200"><strong>480p</strong><small>200 🍒</small></button>
-<button class="quality-option active" type="button" data-quality="720p" data-credits="400"><strong>720p</strong><small>400 🍒</small></button>
-<button class="quality-option" type="button" data-quality="1080p" data-credits="800"><strong>1080p</strong><small>800 🍒</small></button>
+<button class="quality-option" type="button" data-quality="480p" data-rate="25"><strong>480p</strong><small>200 🍒</small></button>
+<button class="quality-option active" type="button" data-quality="720p" data-rate="50"><strong>720p</strong><small>400 🍒</small></button>
+<button class="quality-option" type="button" data-quality="1080p" data-rate="100"><strong>1080p</strong><small>800 🍒</small></button>
 </div></div>
 </div>
 <div class="composer-foot"><div class="credit"><strong>Estimated credits:</strong> <span id="credit-value">400 🍒</span> <span style="color:#a99aaa">· illustrative preview pricing</span></div><button class="generate" type="button" disabled>Generate · Coming soon</button></div>
@@ -69,11 +69,13 @@ function clearFiles(){urls.forEach(URL.revokeObjectURL);urls=[];preview.innerHTM
 input.addEventListener('change',()=>{clearFiles();const files=[...input.files];if(!files.length)return;status.textContent=files.length+' file(s) selected for local preview';files.forEach(file=>{const url=URL.createObjectURL(file);urls.push(url);const el=file.type.startsWith('video/')?document.createElement('video'):document.createElement('img');el.src=url;if(el.tagName==='VIDEO'){el.muted=true;el.playsInline=true;}el.title=file.name;preview.appendChild(el);});preview.style.display='flex';});
 document.getElementById('clear').addEventListener('click',clearFiles);
 const duration=document.getElementById('duration'),durationValue=document.getElementById('duration-value'),creditValue=document.getElementById('credit-value');
-duration.addEventListener('input',()=>{durationValue.textContent=duration.value+'s';});
+function updateCreditEstimate(){const selected=document.querySelector('[data-quality].active');const rate=Number(selected.dataset.rate);const total=Number(duration.value)*rate;durationValue.textContent=duration.value+'s';creditValue.textContent=total.toLocaleString()+' 🍒';}
+duration.addEventListener('input',updateCreditEstimate);
 const filterToggle=document.getElementById('filter-toggle'),filterPanel=document.getElementById('filter-panel');filterPanel.setAttribute('aria-hidden','true');filterPanel.inert=true;
 function setFiltersOpen(open){filterPanel.classList.toggle('open',open);filterToggle.setAttribute('aria-expanded',String(open));filterPanel.setAttribute('aria-hidden',String(!open));filterPanel.inert=!open;}
 filterToggle.addEventListener('click',()=>setFiltersOpen(!filterPanel.classList.contains('open')));
 document.getElementById('filter-close').addEventListener('click',()=>setFiltersOpen(false));
-document.querySelectorAll('[data-quality]').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('[data-quality]').forEach(x=>x.classList.toggle('active',x===button));creditValue.textContent=button.dataset.credits+' 🍒';}));
+document.querySelectorAll('[data-quality]').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('[data-quality]').forEach(x=>x.classList.toggle('active',x===button));updateCreditEstimate();}));
+updateCreditEstimate();
 document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x===b));const filter=b.dataset.filter;document.querySelectorAll('.template').forEach(card=>card.hidden=filter!=='All'&&!card.dataset.category.split(' ').includes(filter));}));
 </script></body></html>
