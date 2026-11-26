@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#17131d">
+  <meta name="description" content="Cherri — bring your stories to life. Create beautiful AI videos with the people and characters you choose.">
+  <title>Cherri — Your story, brought to life</title>
+  <style>
+    :root { color-scheme: dark; --bg:#17131d; --panel:#211b29; --pink:#ff719d; --peach:#ffb38c; --text:#fff8f5; --muted:#c8bac8; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; min-height:100vh; background:radial-gradient(ellipse at 80% 12%, #563044 0, transparent 38%), radial-gradient(ellipse at 8% 75%, #35243d 0, transparent 36%), var(--bg); color:var(--text); font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    a { color:inherit; text-decoration:none; }
+    .wrap { width:min(1120px, calc(100% - 40px)); margin:auto; }
+    header { display:flex; align-items:center; justify-content:space-between; padding:25px 0; }
+    .brand { display:flex; align-items:center; gap:10px; font-weight:800; font-size:1.35rem; letter-spacing:-.04em; }
+    .mark { width:34px; height:34px; display:grid; place-items:center; border-radius:12px; color:#24151e; background:linear-gradient(135deg,var(--peach),var(--pink)); font-size:20px; }
+    nav { display:flex; align-items:center; gap:26px; color:var(--muted); font-size:.92rem; }
+    nav a:hover { color:white; }
+    .button { display:inline-flex; align-items:center; justify-content:center; padding:13px 21px; border-radius:999px; background:linear-gradient(110deg,var(--peach),var(--pink)); color:#28151f; font-weight:750; box-shadow:0 8px 30px #ff719d30; transition:transform .2s ease, box-shadow .2s ease; }
+    .button:hover { transform:translateY(-2px); box-shadow:0 12px 36px #ff719d45; }
+    .hero { display:grid; grid-template-columns:1.05fr .95fr; align-items:center; gap:55px; padding:76px 0 92px; }
+    .eyebrow { display:inline-flex; gap:8px; align-items:center; padding:8px 12px; border:1px solid #ffffff20; border-radius:99px; color:#ffd1d9; background:#ffffff09; font-size:.82rem; }
+    h1 { max-width:650px; margin:22px 0 20px; font-size:clamp(3.2rem,7vw,5.8rem); line-height:.98; letter-spacing:-.075em; }
+    h1 span { background:linear-gradient(100deg,var(--peach),var(--pink)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .intro { max-width:510px; color:var(--muted); font-size:1.12rem; line-height:1.75; }
+    .actions { display:flex; align-items:center; gap:18px; flex-wrap:wrap; margin-top:30px; }
+    .quiet-link { color:#f5d8e2; font-weight:650; }
+    .note { margin-top:18px; color:#a99aaa; font-size:.82rem; }
+    .showcase { position:relative; min-height:430px; display:grid; place-items:center; }
+    .glow { position:absolute; width:82%; aspect-ratio:1; border-radius:50%; background:linear-gradient(135deg,#ffb38c55,#ff719d35); filter:blur(50px); }
+    .preview { position:relative; width:min(100%,390px); aspect-ratio:4/5; border:1px solid #ffffff30; border-radius:30px; overflow:hidden; background:linear-gradient(155deg,#79516c,#33233e 48%,#1d1a2b); box-shadow:0 30px 90px #09060d90; }
+    .preview:before, .preview:after { content:""; position:absolute; border-radius:50%; filter:blur(1px); }
+    .preview:before { width:210px; height:290px; left:35px; top:70px; background:radial-gradient(ellipse at 50% 30%,#f4c6ad 0 16%,#754d5c 17% 34%,transparent 35%), linear-gradient(135deg,#d59a8e,#583e63); transform:rotate(-12deg); }
+    .preview:after { width:210px; height:300px; right:22px; top:110px; background:radial-gradient(ellipse at 50% 28%,#e6b9a8 0 16%,#49364c 17% 34%,transparent 35%), linear-gradient(135deg,#b87d82,#3b2c4b); transform:rotate(12deg); }
+    .preview-label { position:absolute; z-index:2; left:20px; right:20px; bottom:20px; padding:17px; border:1px solid #ffffff28; border-radius:18px; background:#17131dbb; backdrop-filter:blur(12px); }
+    .preview-label strong { display:block; font-size:.98rem; }
+    .preview-label small { display:block; margin-top:5px; color:#d4c5d2; }
+    .spark { position:absolute; z-index:3; color:#ffd0a8; font-size:28px; }
+    .spark.one { top:35px; right:4px; }.spark.two { bottom:45px; left:0; font-size:20px; }
+    .features { padding:36px 0 90px; }
+    .section-head { text-align:center; max-width:620px; margin:0 auto 34px; }
+    .section-head h2 { font-size:clamp(2rem,4vw,3rem); letter-spacing:-.055em; margin:0 0 12px; }
+    .section-head p { color:var(--muted); line-height:1.7; }
+    .cards { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+    .card { padding:24px; border:1px solid #ffffff18; border-radius:22px; background:#ffffff08; }
+    .icon { width:42px; height:42px; display:grid; place-items:center; border-radius:14px; background:#ff9bb21c; font-size:20px; }
+    .card h3 { margin:17px 0 8px; }.card p { margin:0; color:var(--muted); line-height:1.65; font-size:.94rem; }
+    footer { border-top:1px solid #ffffff18; padding:25px 0 35px; color:#a99aaa; font-size:.85rem; }
+    @media (max-width:760px) { .wrap{width:min(100% - 32px,560px)} nav a:not(.button){display:none} .hero{grid-template-columns:1fr; gap:20px; padding:52px 0 55px} h1{font-size:clamp(3.1rem,15vw,5rem)} .showcase{min-height:360px} .preview{width:min(88%,340px)} .cards{grid-template-columns:1fr} .features{padding-bottom:60px} }
+    @media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto} *,*:before,*:after{transition:none!important} }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <a class="brand" href="#" aria-label="Cherri home"><span class="mark">✦</span> cherri</a>
+      <nav aria-label="Main navigation">
+        <a href="#how-it-works">How it works</a>
+        <a href="#features">Features</a>
+        <a class="button" href="mailto:hello@cherri.example?subject=Early%20access%20to%20Cherri">Get started</a>
+      </nav>
+    </header>
+    <main>
+      <section class="hero">
+        <div>
+          <div class="eyebrow"><span>✧</span> Your imagination, in motion</div>
+          <h1>Your story.<br><span>Brought to life.</span></h1>
+          <p class="intro">Create beautiful, personal AI videos with the characters you choose. Dream up a moment, shape your story, and let Cherri bring it to life.</p>
+          <div class="actions">
+            <a class="button" href="mailto:hello@cherri.example?subject=Early%20access%20to%20Cherri">Get early access&nbsp; →</a>
+            <a class="quiet-link" href="#how-it-works">Discover Cherri ↓</a>
+          </div>
+          <p class="note">A new way to create the moments you imagine.</p>
+        </div>
+        <div class="showcase" aria-label="Abstract illustration representing two characters in a video scene">
+          <div class="glow"></div><span class="spark one">✦</span><span class="spark two">✧</span>
+          <div class="preview"><div class="preview-label"><strong>Made from your imagination</strong><small>Your characters. Your scene. Your story.</small></div></div>
+        </div>
+      </section>
+      <section class="features" id="features">
+        <div class="section-head" id="how-it-works">
+          <h2>Make it personal.</h2>
+          <p>Cherri is being built to make creative video generation feel simple, expressive, and yours.</p>
+        </div>
+        <div class="cards">
+          <article class="card"><div class="icon">♡</div><h3>Your characters</h3><p>Build a library of the people and characters you want to bring into your stories.</p></article>
+          <article class="card"><div class="icon">✧</div><h3>Your imagination</h3><p>Describe the moment you have in mind and shape the scene around your idea.</p></article>
+          <article class="card"><div class="icon">▶</div><h3>Your creation</h3><p>Turn a creative idea into a video, with a simple experience from start to finish.</p></article>
+        </div>
+      </section>
+    </main>
+    <footer><div>© 2026 Cherri. Made for the stories you imagine.</div></footer>
+  </div>
+</body>
+</html>
