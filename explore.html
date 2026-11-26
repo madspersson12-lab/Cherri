@@ -48,7 +48,7 @@ h1{font-size:clamp(2rem,5vw,3.25rem);letter-spacing:-.06em;margin:36px 0 6px}.su
 </div></div>
 </div>
 </div>
-<div class="composer-foot"><div class="credit"><strong>Estimated credits:</strong> <span id="credit-value">200 🍒</span> <span style="color:#a99aaa">· illustrative preview pricing</span></div><button class="generate" type="button" disabled>Generate · Coming soon</button></div>
+<div class="composer-foot"><div class="credit"><strong>Estimated credits:</strong> <span id="credit-value">200 🍒</span> <span style="color:#a99aaa">· illustrative preview pricing</span></div><button class="generate" type="button" disabled><span id="generate-label">Generate 8 seconds</span> · Coming soon</button></div>
 <p class="hint">This is a design preview. Your files stay in this browser preview and are not uploaded or used to generate anything.</p>
 </section>
 <div class="section-title"><div><h2>Explore ready-made scenes</h2><p>Choose a template, then add your own reference photo.</p></div></div>
@@ -70,8 +70,8 @@ const input=document.getElementById('media'),preview=document.getElementById('fi
 function clearFiles(){urls.forEach(URL.revokeObjectURL);urls=[];preview.innerHTML='';preview.style.display='none';input.value='';status.textContent='Add reference images or clips (optional)';}
 input.addEventListener('change',()=>{clearFiles();const files=[...input.files];if(!files.length)return;status.textContent=files.length+' file(s) selected for local preview';files.forEach(file=>{const url=URL.createObjectURL(file);urls.push(url);const el=file.type.startsWith('video/')?document.createElement('video'):document.createElement('img');el.src=url;if(el.tagName==='VIDEO'){el.muted=true;el.playsInline=true;}el.title=file.name;preview.appendChild(el);});preview.style.display='flex';});
 document.getElementById('clear').addEventListener('click',clearFiles);
-const duration=document.getElementById('duration'),durationValue=document.getElementById('duration-value'),creditValue=document.getElementById('credit-value');
-function updateCreditEstimate(){const selected=document.querySelector('[data-quality].active');const rate=Number(selected.dataset.rate);const total=Number(duration.value)*rate;durationValue.textContent=duration.value+'s';creditValue.textContent=total.toLocaleString()+' 🍒';}
+const duration=document.getElementById('duration'),durationValue=document.getElementById('duration-value'),creditValue=document.getElementById('credit-value'),generateLabel=document.getElementById('generate-label');
+function updateCreditEstimate(){const selected=document.querySelector('[data-quality].active');const rate=Number(selected.dataset.rate);const total=Number(duration.value)*rate;durationValue.textContent=duration.value+'s';generateLabel.textContent='Generate '+duration.value+' seconds';creditValue.textContent=total.toLocaleString()+' 🍒';}
 duration.addEventListener('input',updateCreditEstimate);
 const filterToggle=document.getElementById('filter-toggle'),filterPanel=document.getElementById('filter-panel');filterPanel.setAttribute('aria-hidden','true');filterPanel.inert=true;
 function setFiltersOpen(open){filterPanel.classList.toggle('open',open);filterToggle.setAttribute('aria-expanded',String(open));filterPanel.setAttribute('aria-hidden',String(!open));filterPanel.inert=!open;}
