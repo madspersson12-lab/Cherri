@@ -31,9 +31,9 @@
     .showcase { position:relative; min-height:430px; display:grid; place-items:center; }
     .glow { position:absolute; width:82%; aspect-ratio:1; border-radius:50%; background:linear-gradient(135deg,#ed123055,#ad092035); filter:blur(50px); }
     .preview { position:relative; width:min(100%,390px); aspect-ratio:4/5; border:1px solid #ffffff30; border-radius:30px; overflow:hidden; background:linear-gradient(155deg,#6b182b,#351522 48%,#1d1a2b); box-shadow:0 30px 90px #09060d90; }
-    .preview:before, .preview:after { content:""; position:absolute; border-radius:50%; filter:blur(1px); }
-    .preview:before { width:210px; height:290px; left:35px; top:70px; background:radial-gradient(ellipse at 50% 30%,#ff9aaa 0 16%,#85152c 17% 34%,transparent 35%), linear-gradient(135deg,#ed1230,#8f1028); transform:rotate(-12deg); }
-    .preview:after { width:210px; height:300px; right:22px; top:110px; background:radial-gradient(ellipse at 50% 28%,#ff8b9c 0 16%,#6d1428 17% 34%,transparent 35%), linear-gradient(135deg,#c20d2b,#641126); transform:rotate(12deg); }
+    .preview:before, .preview:after { content:none; }\n    .preview video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
+    .preview:before { content:none; }
+    .preview:after { content:none; }
     .preview-label { position:absolute; z-index:2; left:20px; right:20px; bottom:20px; padding:17px; border:1px solid #ffffff28; border-radius:18px; background:#17131dbb; backdrop-filter:blur(12px); }
     .preview-label strong { display:block; font-size:.98rem; }
     .preview-label small { display:block; margin-top:5px; color:#d4c5d2; }
@@ -76,7 +76,7 @@
         </div>
         <div class="showcase" aria-label="Abstract illustration representing two characters in a video scene">
           <div class="glow"></div><span class="spark one">✦</span><span class="spark two">✧</span>
-          <div class="preview"><div class="preview-label"><strong>Made from your imagination</strong><small>Your characters. Your scene. Your story.</small></div></div>
+          <div class="preview"><video autoplay muted loop playsinline preload="metadata" aria-label="Blurred preview of a Cherri-generated video"><source src="cherri-hero-blurred.mp4" type="video/mp4"></video><div class="preview-label"><strong>Made from your imagination</strong><small>Your characters. Your scene. Your story.</small></div></div>
         </div>
       </section>
       <section class="features" id="features">
