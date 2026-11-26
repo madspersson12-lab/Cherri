@@ -22,7 +22,7 @@
     .button:hover { transform:translateY(-2px); box-shadow:0 12px 36px #ed123045; }
     .hero { display:grid; grid-template-columns:1.05fr .95fr; align-items:center; gap:55px; padding:76px 0 92px; }
     .eyebrow { display:inline-flex; gap:8px; align-items:center; padding:8px 12px; border:1px solid #ffffff20; border-radius:99px; color:#ffd1d9; background:#ffffff09; font-size:.82rem; }
-    h1 { max-width:650px; margin:22px 0 20px; font-size:clamp(3.2rem,7vw,5.8rem); line-height:.98; letter-spacing:-.075em; }
+    h1 { max-width:100%; margin:22px 0 20px; font-size:clamp(3rem,6.1vw,5.1rem); line-height:1.02; letter-spacing:-.06em; overflow-wrap:normal; }
     h1 span { background:linear-gradient(100deg,var(--cherry-light),var(--cherry)); -webkit-background-clip:text; background-clip:text; color:transparent; }
     .intro { max-width:510px; color:var(--muted); font-size:1.12rem; line-height:1.75; }
     .actions { display:flex; align-items:center; gap:18px; flex-wrap:wrap; margin-top:30px; }
@@ -48,7 +48,7 @@
     .icon { width:42px; height:42px; display:grid; place-items:center; border-radius:14px; background:#ed12301c; font-size:20px; }
     .card h3 { margin:17px 0 8px; }.card p { margin:0; color:var(--muted); line-height:1.65; font-size:.94rem; }
     footer { border-top:1px solid #ffffff18; padding:25px 0 35px; color:#a99aaa; font-size:.85rem; }
-    @media (max-width:760px) { .wrap{width:min(100% - 32px,560px)} nav a:not(.button){display:none} .hero{grid-template-columns:1fr; gap:20px; padding:52px 0 55px} h1{font-size:clamp(3.1rem,15vw,5rem)} .showcase{min-height:360px} .preview{width:min(88%,340px)} .cards{grid-template-columns:1fr} .features{padding-bottom:60px} }
+    @media (max-width:760px) { .wrap{width:min(100% - 32px,560px)} nav a:not(.button){display:none} .hero{grid-template-columns:1fr; gap:20px; padding:52px 0 55px} h1{font-size:clamp(2.75rem,12.5vw,4.5rem);letter-spacing:-.055em;line-height:1.04} .showcase{min-height:360px} .preview{width:min(88%,340px)} .cards{grid-template-columns:1fr} .features{padding-bottom:60px} }
     @media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto} *,*:before,*:after{transition:none!important} }
   </style>
 </head>
