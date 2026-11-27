@@ -34,12 +34,12 @@ footer{border-top:1px solid var(--line);padding:22px 0 32px;color:#a99aaa;font-s
 <span class="eyebrow">✦ Experimental workspace</span>
 <h1>Prompt <span style="color:#ff718c">Interpreter</span></h1>
 <p class="intro">A dedicated space to turn a creator's natural-language idea into clearer, model-ready direction. We will use this workbench to develop the interpretation rules, compare outputs and later connect a real language model and video providers.</p>
-<div class="notice"><strong>Prototype status:</strong> This page currently formats your inputs locally in your browser. It does not call an AI model, upload images or generate video. The output is a structured draft for evaluation, not a claim of AI enhancement.</div>
+<div class="notice" id="apiNotice"><strong>Backend setup:</strong> The real interpreter API is implemented, but it must be deployed and connected below before AI interpretation is live. Your OpenAI key belongs in the backend secret store, never in this page.</div>
 <div class="layout" id="workbench">
 <section class="panel">
 <h2>1. Describe the result</h2>
 <p class="hint">Write naturally. Focus on the result you want rather than trying to write a technical prompt.</p>
-<label for="request">Your original request</label>
+<label for="apiEndpoint">Interpreter API URL</label><input id="apiEndpoint" type="text" placeholder="https://your-worker.your-subdomain.workers.dev"><div class="field-note">Saved only in this browser. Do not enter an API key here.</div>\n<label for="request">Your original request</label>
 <textarea id="request" placeholder="Example: A person walks through a sunlit garden, pauses by the flowers and looks toward the camera. Keep the shot natural and cinematic."></textarea>
 <div class="grid2">
 <div><label for="engine">Target video engine</label><select id="engine"><option value="Generic video model">Generic video model</option><option value="Wiro / Seedance">Wiro / Seedance</option><option value="Provider adapter — to be added">Provider adapter — to be added</option></select></div>
@@ -53,12 +53,12 @@ footer{border-top:1px solid var(--line);padding:22px 0 32px;color:#a99aaa;font-s
 <input id="continuity" type="text" placeholder="e.g. same clothing, hairstyle, face and environment">
 <label for="style">Visual style and lighting <span style="color:#a99aaa;font-weight:400">(optional)</span></label>
 <input id="style" type="text" placeholder="e.g. photorealistic, soft afternoon light">
-<div class="actions"><button class="btn primary" id="interpret">Build structured draft</button><button class="btn secondary" id="clear">Clear</button></div>
+<div class="actions"><button class="btn primary" id="interpret">Interpret with AI</button><button class="btn secondary" id="clear">Clear</button></div>
 </section>
 <section class="panel">
 <h2>2. Interpreted instruction</h2>
 <p class="hint">This is the structured draft that a future prompt-intelligence service could produce and a provider adapter could refine.</p>
-<div class="output" id="output" aria-live="polite"><span class="empty">Your interpreted instruction will appear here. Enter a request and select “Build structured draft”.</span></div>
+<div id="apiStatus" class="hint" role="status">API not connected. Add your deployed Worker URL above, then run a test.</div><div class="output" id="output" aria-live="polite"><span class="empty">The AI interpretation will appear here.</span></div>
 <div class="output-head"><label for="original">Original request (unchanged)</label><span class="tag">Source preserved</span></div>
 <div class="output" id="original"><span class="empty">Nothing submitted yet.</span></div>
 <div class="actions"><button class="btn secondary" id="copy" disabled>Copy draft</button></div>
@@ -75,43 +75,35 @@ footer{border-top:1px solid var(--line);padding:22px 0 32px;color:#a99aaa;font-s
 </div>
 <script>
 const $=id=>document.getElementById(id);
-function interpret(){
- const request=$('request').value.trim();
- if(!request){$('request').focus();return;}
- const engine=$('engine').value,duration=$('duration').value;
- const framing=$('framing').value.trim(),motion=$('motion').value.trim(),continuity=$('continuity').value.trim(),style=$('style').value.trim();
- const lines=[
-  'CORE INTENT',
-  request,
-  '',
-  'GENERATION TARGET',
-  'Video engine: '+engine,
-  'Target duration: '+duration,
-  '',
-  'SHOT AND COMPOSITION',
-  framing||'Not specified — preserve the composition implied by the original request.',
-  '',
-  'ACTION AND MOTION',
-  motion||'Not specified — do not invent additional actions.',
-  '',
-  'CONTINUITY CONSTRAINTS',
-  continuity||'No additional continuity constraints supplied.',
-  '',
-  'VISUAL TREATMENT',
-  style||'Follow the visual style implied by the original request.',
-  '',
-  'INTERPRETATION RULES',
-  '- Preserve the original intent and all explicit constraints.',
-  '- Do not add subjects, actions, props or setting details that were not requested.',
-  '- Resolve ambiguity conservatively; ask for clarification when a missing detail materially changes the result.',
-  '- Keep provider-specific syntax in the provider adapter, not in the core interpretation.'
- ];
- $('output').textContent=lines.join('\n');
- $('original').textContent=request;
- $('copy').disabled=false;
+const savedEndpoint=localStorage.getItem('cherriInterpreterEndpoint')||'';
+$('apiEndpoint').value=savedEndpoint;
+$('apiEndpoint').addEventListener('change',()=>{
+ const value=$('apiEndpoint').value.trim().replace(/\/$/,'');
+ localStorage.setItem('cherriInterpreterEndpoint',value);
+ $('apiStatus').textContent=value?'Endpoint saved. Ready to test.':'API endpoint cleared.';
+});
+function showError(message){$('apiStatus').textContent=message;$('apiStatus').style.color='#ff9aaa';}
+async function interpret(){
+ const prompt=$('request').value.trim();
+ const endpoint=$('apiEndpoint').value.trim().replace(/\/$/,'');
+ if(!prompt){$('request').focus();return;}
+ if(!endpoint){showError('Add your deployed Worker URL first. The backend code is in interpreter-api/worker.js.');return;}
+ localStorage.setItem('cherriInterpreterEndpoint',endpoint);
+ $('interpret').disabled=true;$('interpret').textContent='Interpreting…';
+ $('apiStatus').textContent='Sending your prompt to Cherri Interpreter…';$('apiStatus').style.color='';
+ $('output').textContent='Waiting for the AI interpreter…';$('original').textContent=prompt;
+ try{
+  const response=await fetch(endpoint+'/interpret',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt})});
+  const data=await response.json();
+  if(!response.ok){showError(data.error||'Interpreter request failed.');$('output').textContent=JSON.stringify(data,null,2);return;}
+  $('output').textContent=JSON.stringify(data.interpretation,null,2);
+  $('apiStatus').textContent='AI interpretation successful · '+data.meta.model+' · schema '+data.meta.schema_version;
+  $('apiStatus').style.color='#8be0b1';$('copy').disabled=false;
+ }catch(error){showError('Could not reach the API. Check the Worker URL, deployment and CORS settings.');$('output').textContent=String(error);}
+ finally{$('interpret').disabled=false;$('interpret').textContent='Interpret with AI';}
 }
 $('interpret').addEventListener('click',interpret);
-$('clear').addEventListener('click',()=>{['request','framing','motion','continuity','style'].forEach(id=>$(id).value='');$('output').innerHTML='<span class="empty">Your interpreted instruction will appear here. Enter a request and select “Build structured draft”.</span>';$('original').innerHTML='<span class="empty">Nothing submitted yet.</span>';$('copy').disabled=true;});
+$('clear').addEventListener('click',()=>{['request','framing','motion','continuity','style'].forEach(id=>{if($(id))$(id).value='';});$('output').innerHTML='<span class="empty">The AI interpretation will appear here.</span>';$('original').innerHTML='<span class="empty">Nothing submitted yet.</span>';$('copy').disabled=true;$('apiStatus').textContent='Ready for another test.';});
 $('copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText($('output').textContent);$('copy').textContent='Copied';setTimeout(()=>$('copy').textContent='Copy draft',1300);}catch(e){$('copy').textContent='Select and copy';}});
 </script>
 </body>
