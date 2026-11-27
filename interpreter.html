@@ -80,12 +80,12 @@ footer{border-top:1px solid var(--line);padding:22px 0 32px;color:#a99aaa;font-s
 const $=id=>document.getElementById(id);
 const savedEndpoint=localStorage.getItem("cherriInterpreterApiUrl")||window.CHERRI_API_BASE_URL||"https://projectcherri.vercel.app";
 $("apiEndpoint").value=savedEndpoint;
-$("apiEndpoint").addEventListener("change",()=>{const value=$("apiEndpoint").value.trim().replace(/\\/$/,"");localStorage.setItem("cherriInterpreterApiUrl",value);$("apiStatus").textContent=value?"Backend URL saved in this browser.":"Backend URL cleared.";});
+$("apiEndpoint").addEventListener("change",()=>{const value=$("apiEndpoint").value.trim().replace(/\/$//,"");localStorage.setItem("cherriInterpreterApiUrl",value);$("apiStatus").textContent=value?"Backend URL saved in this browser.":"Backend URL cleared.";});
 function setStatus(message){$("output").textContent=message;}
 async function interpret(){
  const request=$('request').value.trim();
  if(!request){$('request').focus();return;}
- const endpoint=$("apiEndpoint").value.trim().replace(/\\/$/,"");
+ const endpoint=$("apiEndpoint").value.trim().replace(/\/$//,"");
  if(!endpoint){$("apiStatus").textContent="Enter the deployed backend URL to run a live AI interpretation.";return;}
  localStorage.setItem("cherriInterpreterApiUrl",endpoint);
  const button=$('interpret');
