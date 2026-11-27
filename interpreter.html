@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#17131d">
+<title>Prompt Interpreter Lab — Cherri</title>
+<style>
+:root{color-scheme:dark;--bg:#17131d;--panel:#241d2b;--panel2:#2d2434;--red:#ed1230;--pink:#ff718c;--text:#fff8f5;--muted:#c8bac8;--line:#ffffff20;--green:#8be0b1}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 90% 0%,#4a1725 0,transparent 34%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:inherit;text-decoration:none}button,textarea,select,input{font:inherit}.wrap{width:min(1160px,calc(100% - 36px));margin:auto}
+header{height:76px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}.brand{font-size:1.25rem;font-weight:850;letter-spacing:-.04em;display:flex;align-items:center;gap:10px}.brand-mark{width:38px;height:38px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(145deg,#ed1230,#8f071d);box-shadow:0 7px 22px #ed123044}.nav{display:flex;gap:20px;color:var(--muted);font-size:.9rem}.nav a:hover{color:white}
+main{padding:42px 0 70px}.eyebrow{display:inline-flex;gap:8px;align-items:center;border:1px solid #ff718c55;background:#ed123018;color:#ffc4d0;border-radius:99px;padding:7px 11px;font-size:.78rem;font-weight:750;letter-spacing:.04em;text-transform:uppercase}
+h1{font-size:clamp(2.2rem,5vw,3.8rem);letter-spacing:-.065em;line-height:1.02;margin:18px 0 12px}.intro{max-width:760px;color:var(--muted);line-height:1.7;margin:0 0 28px}
+.notice{border:1px solid #ffca7155;background:#ffca7110;color:#f4d9b3;border-radius:13px;padding:12px 15px;font-size:.85rem;line-height:1.5;margin-bottom:20px}
+.layout{display:grid;grid-template-columns:1.04fr .96fr;gap:18px;align-items:start}.panel{border:1px solid var(--line);background:linear-gradient(145deg,#2b2231,#201a27);border-radius:20px;padding:20px;box-shadow:0 18px 50px #09060d35}.panel h2{font-size:1.02rem;margin:0 0 5px}.hint{color:var(--muted);font-size:.82rem;line-height:1.5;margin:0 0 16px}
+label{display:block;color:#e8dce8;font-size:.82rem;font-weight:650;margin:15px 0 7px}textarea,select,input[type=text]{width:100%;background:#17131d;border:1px solid #ffffff25;border-radius:12px;color:var(--text);padding:12px 13px;outline:none}textarea:focus,select:focus,input:focus{border-color:#ff718c99;box-shadow:0 0 0 3px #ed123018}textarea{min-height:150px;resize:vertical;line-height:1.55}textarea::placeholder,input::placeholder{color:#897b8b}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.field-note{color:#a99aaa;font-size:.74rem;margin-top:5px}
+.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px}.btn{border:1px solid transparent;border-radius:12px;padding:11px 16px;font-weight:750;cursor:pointer}.primary{background:linear-gradient(110deg,#ed1230,#ad0920);color:white;box-shadow:0 8px 25px #ed123033}.secondary{border-color:var(--line);background:#ffffff08;color:var(--muted)}.btn:hover{filter:brightness(1.12)}
+.output{min-height:250px;background:#17131d;border:1px solid #ffffff20;border-radius:13px;padding:15px;color:#f8edf5;white-space:pre-wrap;line-height:1.65;font-size:.88rem;overflow-wrap:anywhere}.empty{color:#96889a}.output-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:15px 0 8px}.output-head label{margin:0}.tag{font-size:.7rem;border:1px solid #8be0b155;color:var(--green);border-radius:99px;padding:5px 8px}
+.checks{display:grid;gap:9px;margin-top:15px}.check{display:flex;gap:9px;align-items:flex-start;color:var(--muted);font-size:.8rem;line-height:1.45}.check b{color:var(--text);font-weight:650}
+footer{border-top:1px solid var(--line);padding:22px 0 32px;color:#a99aaa;font-size:.8rem}
+@media(max-width:820px){.layout{grid-template-columns:1fr}.nav{gap:12px;font-size:.8rem}.grid3{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.wrap{width:calc(100% - 26px)}header{height:66px}.brand{font-size:1.05rem}.nav a:nth-child(2){display:none}.panel{padding:15px}.grid2{grid-template-columns:1fr}.grid3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<a class="brand" href="index.html"><span class="brand-mark">🍒</span> Cherri <span style="color:#ff718c;font-size:.78rem;font-weight:650">/ Interpreter Lab</span></a>
+<nav class="nav"><a href="index.html">Home</a><a href="explore.html">Explore</a><a href="#workbench">Workbench</a></nav>
+</header>
+<main>
+<span class="eyebrow">✦ Experimental workspace</span>
+<h1>Prompt <span style="color:#ff718c">Interpreter</span></h1>
+<p class="intro">A dedicated space to turn a creator's natural-language idea into clearer, model-ready direction. We will use this workbench to develop the interpretation rules, compare outputs and later connect a real language model and video providers.</p>
+<div class="notice"><strong>Prototype status:</strong> This page currently formats your inputs locally in your browser. It does not call an AI model, upload images or generate video. The output is a structured draft for evaluation, not a claim of AI enhancement.</div>
+<div class="layout" id="workbench">
+<section class="panel">
+<h2>1. Describe the result</h2>
+<p class="hint">Write naturally. Focus on the result you want rather than trying to write a technical prompt.</p>
+<label for="request">Your original request</label>
+<textarea id="request" placeholder="Example: A person walks through a sunlit garden, pauses by the flowers and looks toward the camera. Keep the shot natural and cinematic."></textarea>
+<div class="grid2">
+<div><label for="engine">Target video engine</label><select id="engine"><option value="Generic video model">Generic video model</option><option value="Wiro / Seedance">Wiro / Seedance</option><option value="Provider adapter — to be added">Provider adapter — to be added</option></select></div>
+<div><label for="duration">Target duration</label><select id="duration"><option>5 seconds</option><option selected>8 seconds</option><option>10 seconds</option><option>14 seconds</option><option>Custom / provider default</option></select></div>
+</div>
+<label for="framing">Camera and framing <span style="color:#a99aaa;font-weight:400">(optional)</span></label>
+<input id="framing" type="text" placeholder="e.g. medium-wide shot, eye-level, steady camera">
+<label for="motion">Movement and action <span style="color:#a99aaa;font-weight:400">(optional)</span></label>
+<input id="motion" type="text" placeholder="e.g. slow natural movement, one continuous take">
+<label for="continuity">Details to preserve <span style="color:#a99aaa;font-weight:400">(optional)</span></label>
+<input id="continuity" type="text" placeholder="e.g. same clothing, hairstyle, face and environment">
+<label for="style">Visual style and lighting <span style="color:#a99aaa;font-weight:400">(optional)</span></label>
+<input id="style" type="text" placeholder="e.g. photorealistic, soft afternoon light">
+<div class="actions"><button class="btn primary" id="interpret">Build structured draft</button><button class="btn secondary" id="clear">Clear</button></div>
+</section>
+<section class="panel">
+<h2>2. Interpreted instruction</h2>
+<p class="hint">This is the structured draft that a future prompt-intelligence service could produce and a provider adapter could refine.</p>
+<div class="output" id="output" aria-live="polite"><span class="empty">Your interpreted instruction will appear here. Enter a request and select “Build structured draft”.</span></div>
+<div class="output-head"><label for="original">Original request (unchanged)</label><span class="tag">Source preserved</span></div>
+<div class="output" id="original"><span class="empty">Nothing submitted yet.</span></div>
+<div class="actions"><button class="btn secondary" id="copy" disabled>Copy draft</button></div>
+<div class="checks">
+<div class="check">✓ <span><b>Intent first:</b> preserve what the creator asked for; do not invent major actions or scene details.</span></div>
+<div class="check">✓ <span><b>Continuity:</b> make identity, clothing and environment constraints explicit when supplied.</span></div>
+<div class="check">✓ <span><b>Provider-aware:</b> keep the core interpretation separate from engine-specific formatting.</span></div>
+<div class="check">✓ <span><b>Safety-aware:</b> future moderation and reference-image checks remain separate from prompt rewriting.</span></div>
+</div>
+</section>
+</div>
+</main>
+<footer>Cherri Prompt Interpreter Lab · Prototype 0.1 · Separate from the production Explore experience</footer>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+function interpret(){
+ const request=$('request').value.trim();
+ if(!request){$('request').focus();return;}
+ const engine=$('engine').value,duration=$('duration').value;
+ const framing=$('framing').value.trim(),motion=$('motion').value.trim(),continuity=$('continuity').value.trim(),style=$('style').value.trim();
+ const lines=[
+  'CORE INTENT',
+  request,
+  '',
+  'GENERATION TARGET',
+  'Video engine: '+engine,
+  'Target duration: '+duration,
+  '',
+  'SHOT AND COMPOSITION',
+  framing||'Not specified — preserve the composition implied by the original request.',
+  '',
+  'ACTION AND MOTION',
+  motion||'Not specified — do not invent additional actions.',
+  '',
+  'CONTINUITY CONSTRAINTS',
+  continuity||'No additional continuity constraints supplied.',
+  '',
+  'VISUAL TREATMENT',
+  style||'Follow the visual style implied by the original request.',
+  '',
+  'INTERPRETATION RULES',
+  '- Preserve the original intent and all explicit constraints.',
+  '- Do not add subjects, actions, props or setting details that were not requested.',
+  '- Resolve ambiguity conservatively; ask for clarification when a missing detail materially changes the result.',
+  '- Keep provider-specific syntax in the provider adapter, not in the core interpretation.'
+ ];
+ $('output').textContent=lines.join('\n');
+ $('original').textContent=request;
+ $('copy').disabled=false;
+}
+$('interpret').addEventListener('click',interpret);
+$('clear').addEventListener('click',()=>{['request','framing','motion','continuity','style'].forEach(id=>$(id).value='');$('output').innerHTML='<span class="empty">Your interpreted instruction will appear here. Enter a request and select “Build structured draft”.</span>';$('original').innerHTML='<span class="empty">Nothing submitted yet.</span>';$('copy').disabled=true;});
+$('copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText($('output').textContent);$('copy').textContent='Copied';setTimeout(()=>$('copy').textContent='Copy draft',1300);}catch(e){$('copy').textContent='Select and copy';}});
+</script>
+</body>
+</html>
