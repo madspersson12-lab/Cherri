@@ -90,6 +90,7 @@ async function interpret(){
  localStorage.setItem("cherriInterpreterApiUrl",endpoint);
  const button=$('interpret');
  button.disabled=true;button.textContent='Interpreting…';
+ $("apiStatus").textContent="Sending your prompt to the Cherri AI backend…";
  setStatus('Cherri is interpreting your prompt…');
  $('original').textContent=request;$('copy').disabled=true;
  const durationValue=$('duration').value;
