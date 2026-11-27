@@ -39,6 +39,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 32px;color:#a99aaa;font-s
 <section class="panel">
 <h2>1. Describe the result</h2>
 <p class="hint">Write naturally. Focus on the result you want rather than trying to write a technical prompt.</p>
+<label for="apiEndpoint">Deployed interpreter API URL</label><input id="apiEndpoint" type="text" placeholder="https://your-cherri-api.vercel.app"><div class="field-note">Enter the deployed backend address. Your OpenAI key must stay on the server and must never be entered here.</div>
 <label for="request">Your original request</label>
 <textarea id="request" placeholder="Example: A person walks through a sunlit garden, pauses by the flowers and looks toward the camera. Keep the shot natural and cinematic."></textarea>
 <div>
@@ -59,7 +60,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 32px;color:#a99aaa;font-s
 <section class="panel">
 <h2>2. Interpreted instruction</h2>
 <p class="hint">Live AI interpretation · validated JSON · provider-neutral</p>
-<div class="output" id="output" aria-live="polite"><span class="empty">Your interpreted instruction will appear here. Enter a request and select “Interpret with AI”.</span></div>
+<div id="apiStatus" class="hint" role="status">Backend URL required before a live test.</div><div class="output" id="output" aria-live="polite"><span class="empty">Your interpreted instruction will appear here. Enter a request and select “Interpret with AI”.</span></div>
 <div class="output-head"><label for="original">Original request (unchanged)</label><span class="tag">Source preserved</span></div>
 <div class="output" id="original"><span class="empty">Nothing submitted yet.</span></div>
 <div class="actions"><button class="btn secondary" id="copy" disabled>Copy draft</button></div>
@@ -76,12 +77,17 @@ footer{border-top:1px solid var(--line);padding:22px 0 32px;color:#a99aaa;font-s
 </div>
 <script>
 // Set this to the deployed backend origin, for example https://your-cherri-api.vercel.app.
-const CHERRI_API_BASE_URL = (window.CHERRI_API_BASE_URL || "").replace(/\\/$/, "");
 const $=id=>document.getElementById(id);
-function setStatus(message){$('output').textContent=message;}
+const savedEndpoint=localStorage.getItem("cherriInterpreterApiUrl")||window.CHERRI_API_BASE_URL||"";
+$("apiEndpoint").value=savedEndpoint;
+$("apiEndpoint").addEventListener("change",()=>{const value=$("apiEndpoint").value.trim().replace(/\\/$/,"");localStorage.setItem("cherriInterpreterApiUrl",value);$("apiStatus").textContent=value?"Backend URL saved in this browser.":"Backend URL cleared.";});
+function setStatus(message){$("output").textContent=message;}
 async function interpret(){
  const request=$('request').value.trim();
  if(!request){$('request').focus();return;}
+ const endpoint=$("apiEndpoint").value.trim().replace(/\\/$/,"");
+ if(!endpoint){$("apiStatus").textContent="Enter the deployed backend URL to run a live AI interpretation.";return;}
+ localStorage.setItem("cherriInterpreterApiUrl",endpoint);
  const button=$('interpret');
  button.disabled=true;button.textContent='Interpreting…';
  setStatus('Cherri is interpreting your prompt…');
@@ -89,13 +95,14 @@ async function interpret(){
  const durationValue=$('duration').value;
  const context={duration_seconds:durationValue==='custom'?8:Number(durationValue),camera:$('framing').value.trim(),motion:$('motion').value.trim(),continuity:$('continuity').value.trim(),visual_style:$('style').value.trim()};
  try{
-  const response=await fetch((CHERRI_API_BASE_URL || '')+'/api/interpret',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:request,context})});
+  const response=await fetch(endpoint+'/api/interpret',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:request,context})});
   const data=await response.json().catch(()=>({}));
   if(!response.ok)throw new Error(data.error||'The interpreter request failed.');
   if(!data.interpretation||typeof data.interpretation!=='object')throw new Error('The backend returned an invalid response.');
   $('output').textContent=JSON.stringify(data.interpretation,null,2);$('copy').disabled=false;
  }catch(error){
-  setStatus('Interpreter error\n\n'+(error.message||'Could not reach the Cherri backend.')+'\n\nCheck the backend URL, allowed GitHub Pages origin, deployment, and server-side OPENAI_API_KEY.');
+  $("apiStatus").textContent="Backend request failed. Check deployment, allowed origin and server-side OPENAI_API_KEY.";
+  setStatus("Interpreter error\n\n"+(error.message||"Could not reach the Cherri backend."));
  }finally{button.disabled=false;button.textContent='Interpret with AI';}
 }
 $('interpret').addEventListener('click',interpret);
