@@ -98,7 +98,7 @@ async function interpret(){
  try{
   const response=await fetch(endpoint+'/api/interpret',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:request,context})});
   const data=await response.json().catch(()=>({}));
-  if(!response.ok)throw new Error(data.error||'The interpreter request failed.');
+  if(!response.ok)throw new Error([data.error,data.detail].filter(Boolean).join(' — ')||'The interpreter request failed (HTTP '+response.status+').');
   if(!data.interpretation||typeof data.interpretation!=='object')throw new Error('The backend returned an invalid response.');
   $('output').textContent=JSON.stringify(data.interpretation,null,2);$('copy').disabled=false;
  }catch(error){
