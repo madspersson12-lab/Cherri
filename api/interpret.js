@@ -30,7 +30,7 @@ const interpretationSchema = {
   ]
 };
 
-const ALLOWED_ORIGINS = (process.env.CHERRI_ALLOWED_ORIGINS || "https://madspersson12-lab.github.io").split(",").map(value => value.trim()).filter(Boolean);
+const ALLOWED_ORIGINS = [...new Set([...(process.env.CHERRI_ALLOWED_ORIGINS || "https://madspersson12-lab.github.io").split(",").map(value => value.trim()).filter(Boolean), "https://projectcherri.vercel.app", "https://cherri-izgn.vercel.app"])];
 
 function applyCors(req, res) {
   const origin = req.headers.origin;
