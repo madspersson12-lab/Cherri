@@ -75,6 +75,13 @@ function validateResult(value, originalPrompt) {
 }
 
 module.exports = async function handler(req, res) {
+  applyCors(req, res);
+  if (req.method === "OPTIONS") {
+    if (req.headers.origin && !res.getHeader("Access-Control-Allow-Origin")) {
+      return send(res, 403, { error: "Origin not allowed." });
+    }
+    return res.status(204).end();
+  }
   if (req.method === "GET") return send(res, 200, { service: "Cherri Interpreter", status: "ok", schema_version: "1.0" });
   if (req.method !== "POST") {
     res.setHeader("Allow", "GET, POST, OPTIONS");
