@@ -33,7 +33,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 32px;color:#a99aaa;font-s
 <main>
 <span class="eyebrow">✦ Experimental workspace</span>
 <h1>Prompt <span style="color:#ff718c">Interpreter</span></h1>
-<p class="intro">A dedicated space to turn a creator's natural-language idea into clearer, model-ready direction. We will use this workbench to develop the interpretation rules, compare outputs and later connect a real language model and video providers.</p>
+<p class="intro">A dedicated space to turn a creator's natural-language idea into clearer, model-ready direction. We will use this workbench to develop the interpretation rules, compare outputs and connect a real language model. Video-generation providers remain separate.</p>
 <div class="notice"><strong>AI interpreter:</strong> Your prompt is sent securely to the Cherri backend and interpreted by an AI model. The backend validates provider-neutral JSON before returning it. No video is generated and no video provider is called.</div>
 <div class="layout" id="workbench">
 <section class="panel">
@@ -59,7 +59,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 32px;color:#a99aaa;font-s
 <section class="panel">
 <h2>2. Interpreted instruction</h2>
 <p class="hint">Live AI interpretation · validated JSON · provider-neutral</p>
-<div class="output" id="output" aria-live="polite"><span class="empty">Your interpreted instruction will appear here. Enter a request and select “Build structured draft”.</span></div>
+<div class="output" id="output" aria-live="polite"><span class="empty">Your interpreted instruction will appear here. Enter a request and select “Interpret with AI”.</span></div>
 <div class="output-head"><label for="original">Original request (unchanged)</label><span class="tag">Source preserved</span></div>
 <div class="output" id="original"><span class="empty">Nothing submitted yet.</span></div>
 <div class="actions"><button class="btn secondary" id="copy" disabled>Copy draft</button></div>
@@ -72,9 +72,11 @@ footer{border-top:1px solid var(--line);padding:22px 0 32px;color:#a99aaa;font-s
 </section>
 </div>
 </main>
-<footer>Cherri Prompt Interpreter Lab · Prototype 0.1 · Separate from the production Explore experience</footer>
+<footer>Cherri Prompt Interpreter Lab · AI-backed · Separate from the production Explore experience</footer>
 </div>
 <script>
+// Set this to the deployed backend origin, for example https://your-cherri-api.vercel.app.
+const CHERRI_API_BASE_URL = (window.CHERRI_API_BASE_URL || "").replace(/\\/$/, "");
 const $=id=>document.getElementById(id);
 function setStatus(message){$('output').textContent=message;}
 async function interpret(){
@@ -87,13 +89,13 @@ async function interpret(){
  const durationValue=$('duration').value;
  const context={duration_seconds:durationValue==='custom'?8:Number(durationValue),camera:$('framing').value.trim(),motion:$('motion').value.trim(),continuity:$('continuity').value.trim(),visual_style:$('style').value.trim()};
  try{
-  const response=await fetch('/api/interpret',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:request,context})});
+  const response=await fetch((CHERRI_API_BASE_URL || '')+'/api/interpret',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:request,context})});
   const data=await response.json().catch(()=>({}));
   if(!response.ok)throw new Error(data.error||'The interpreter request failed.');
   if(!data.interpretation||typeof data.interpretation!=='object')throw new Error('The backend returned an invalid response.');
   $('output').textContent=JSON.stringify(data.interpretation,null,2);$('copy').disabled=false;
  }catch(error){
-  setStatus('Interpreter error\n\n'+(error.message||'Could not reach the Cherri backend.')+'\n\nCheck that the backend is deployed and OPENAI_API_KEY is configured.');
+  setStatus('Interpreter error\n\n'+(error.message||'Could not reach the Cherri backend.')+'\n\nCheck the backend URL, allowed GitHub Pages origin, deployment, and server-side OPENAI_API_KEY.');
  }finally{button.disabled=false;button.textContent='Interpret with AI';}
 }
 $('interpret').addEventListener('click',interpret);
