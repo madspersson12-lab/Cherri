@@ -41,9 +41,10 @@ footer{border-top:1px solid var(--line);padding:22px 0 32px;color:#a99aaa;font-s
 <p class="hint">Write naturally. Focus on the result you want rather than trying to write a technical prompt.</p>
 <label for="request">Your original request</label>
 <textarea id="request" placeholder="Example: A person walks through a sunlit garden, pauses by the flowers and looks toward the camera. Keep the shot natural and cinematic."></textarea>
-<div class="grid2">
-<div><label for="engine">Target video engine</label><select id="engine"><option value="Generic video model">Generic video model</option><option value="Wiro / Seedance">Wiro / Seedance</option><option value="Provider adapter — to be added">Provider adapter — to be added</option></select></div>
-<div><label for="duration">Target duration</label><select id="duration"><option>5 seconds</option><option selected>8 seconds</option><option>10 seconds</option><option>14 seconds</option><option>Custom / provider default</option></select></div>
+<div>
+<label for="duration">Target duration</label>
+<select id="duration"><option value="5">5 seconds</option><option value="8" selected>8 seconds</option><option value="10">10 seconds</option><option value="14">14 seconds</option><option value="custom">Custom / provider default</option></select>
+<div class="field-note">The core interpreter stays independent of video-generation providers.</div>
 </div>
 <label for="framing">Camera and framing <span style="color:#a99aaa;font-weight:400">(optional)</span></label>
 <input id="framing" type="text" placeholder="e.g. medium-wide shot, eye-level, steady camera">
