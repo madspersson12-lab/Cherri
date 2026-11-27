@@ -30,6 +30,19 @@ const interpretationSchema = {
   ]
 };
 
+const ALLOWED_ORIGINS = (process.env.CHERRI_ALLOWED_ORIGINS || "https://madspersson12-lab.github.io").split(",").map(value => value.trim()).filter(Boolean);
+
+function applyCors(req, res) {
+  const origin = req.headers.origin;
+  if (origin && (ALLOWED_ORIGINS.includes(origin) || /^http:\/\/(localhost|127\\.0\\.0\\.1)(:\\d+)?$/.test(origin))) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Vary", "Origin");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Max-Age", "86400");
+  }
+}
+
 function send(res, status, body) {
   res.status(status).setHeader("Content-Type", "application/json; charset=utf-8");
   res.setHeader("Cache-Control", "no-store");
