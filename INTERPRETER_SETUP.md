@@ -14,11 +14,7 @@ Do not add the OpenAI key to GitHub, HTML, JavaScript, or GitHub Pages settings.
 
 ## Connect GitHub Pages to the API
 
-In `interpreter.html`, set `window.CHERRI_API_BASE_URL` before the interpreter script runs to the Vercel deployment origin. Example:
-
-```html
-<script>window.CHERRI_API_BASE_URL = "https://your-cherri-api.vercel.app";</script>
-```
+In the Interpreter Lab page, enter the Vercel deployment origin in the **Deployed interpreter API URL** field. The page saves that address in the current browser only; it does not contain or expose the OpenAI key.
 
 The page then calls `POST https://your-cherri-api.vercel.app/api/interpret`. The API permits only origins listed in `CHERRI_ALLOWED_ORIGINS` (plus localhost for development).
 
