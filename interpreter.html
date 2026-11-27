@@ -78,7 +78,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 32px;color:#a99aaa;font-s
 <script>
 // Set this to the deployed backend origin, for example https://your-cherri-api.vercel.app.
 const $=id=>document.getElementById(id);
-const savedEndpoint=localStorage.getItem("cherriInterpreterApiUrl")||window.CHERRI_API_BASE_URL||"";
+const savedEndpoint=localStorage.getItem("cherriInterpreterApiUrl")||window.CHERRI_API_BASE_URL||"https://projectcherri.vercel.app";
 $("apiEndpoint").value=savedEndpoint;
 $("apiEndpoint").addEventListener("change",()=>{const value=$("apiEndpoint").value.trim().replace(/\\/$/,"");localStorage.setItem("cherriInterpreterApiUrl",value);$("apiStatus").textContent=value?"Backend URL saved in this browser.":"Backend URL cleared.";});
 function setStatus(message){$("output").textContent=message;}
