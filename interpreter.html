@@ -34,7 +34,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 32px;color:#a99aaa;font-s
 <span class="eyebrow">✦ Experimental workspace</span>
 <h1>Prompt <span style="color:#ff718c">Interpreter</span></h1>
 <p class="intro">A dedicated space to turn a creator's natural-language idea into clearer, model-ready direction. We will use this workbench to develop the interpretation rules, compare outputs and later connect a real language model and video providers.</p>
-<div class="notice"><strong>Prototype status:</strong> This page currently formats your inputs locally in your browser. It does not call an AI model, upload images or generate video. The output is a structured draft for evaluation, not a claim of AI enhancement.</div>
+<div class="notice"><strong>AI interpreter:</strong> Your prompt is sent securely to the Cherri backend and interpreted by an AI model. The backend validates provider-neutral JSON before returning it. No video is generated and no video provider is called.</div>
 <div class="layout" id="workbench">
 <section class="panel">
 <h2>1. Describe the result</h2>
@@ -53,11 +53,11 @@ footer{border-top:1px solid var(--line);padding:22px 0 32px;color:#a99aaa;font-s
 <input id="continuity" type="text" placeholder="e.g. same clothing, hairstyle, face and environment">
 <label for="style">Visual style and lighting <span style="color:#a99aaa;font-weight:400">(optional)</span></label>
 <input id="style" type="text" placeholder="e.g. photorealistic, soft afternoon light">
-<div class="actions"><button class="btn primary" id="interpret">Build structured draft</button><button class="btn secondary" id="clear">Clear</button></div>
+<div class="actions"><button class="btn primary" id="interpret">Interpret with AI</button><button class="btn secondary" id="clear">Clear</button></div>
 </section>
 <section class="panel">
 <h2>2. Interpreted instruction</h2>
-<p class="hint">This is the structured draft that a future prompt-intelligence service could produce and a provider adapter could refine.</p>
+<p class="hint">Live AI interpretation · validated JSON · provider-neutral</p>
 <div class="output" id="output" aria-live="polite"><span class="empty">Your interpreted instruction will appear here. Enter a request and select “Build structured draft”.</span></div>
 <div class="output-head"><label for="original">Original request (unchanged)</label><span class="tag">Source preserved</span></div>
 <div class="output" id="original"><span class="empty">Nothing submitted yet.</span></div>
@@ -75,43 +75,28 @@ footer{border-top:1px solid var(--line);padding:22px 0 32px;color:#a99aaa;font-s
 </div>
 <script>
 const $=id=>document.getElementById(id);
-function interpret(){
+function setStatus(message){$('output').textContent=message;}
+async function interpret(){
  const request=$('request').value.trim();
  if(!request){$('request').focus();return;}
- const engine=$('engine').value,duration=$('duration').value;
- const framing=$('framing').value.trim(),motion=$('motion').value.trim(),continuity=$('continuity').value.trim(),style=$('style').value.trim();
- const lines=[
-  'CORE INTENT',
-  request,
-  '',
-  'GENERATION TARGET',
-  'Video engine: '+engine,
-  'Target duration: '+duration,
-  '',
-  'SHOT AND COMPOSITION',
-  framing||'Not specified — preserve the composition implied by the original request.',
-  '',
-  'ACTION AND MOTION',
-  motion||'Not specified — do not invent additional actions.',
-  '',
-  'CONTINUITY CONSTRAINTS',
-  continuity||'No additional continuity constraints supplied.',
-  '',
-  'VISUAL TREATMENT',
-  style||'Follow the visual style implied by the original request.',
-  '',
-  'INTERPRETATION RULES',
-  '- Preserve the original intent and all explicit constraints.',
-  '- Do not add subjects, actions, props or setting details that were not requested.',
-  '- Resolve ambiguity conservatively; ask for clarification when a missing detail materially changes the result.',
-  '- Keep provider-specific syntax in the provider adapter, not in the core interpretation.'
- ];
- $('output').textContent=lines.join('\n');
- $('original').textContent=request;
- $('copy').disabled=false;
+ const button=$('interpret');
+ button.disabled=true;button.textContent='Interpreting…';
+ setStatus('Cherri is interpreting your prompt…');
+ $('original').textContent=request;$('copy').disabled=true;
+ const durationValue=$('duration').value;
+ const context={duration_seconds:durationValue==='custom'?8:Number(durationValue),camera:$('framing').value.trim(),motion:$('motion').value.trim(),continuity:$('continuity').value.trim(),visual_style:$('style').value.trim()};
+ try{
+  const response=await fetch('/api/interpret',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:request,context})});
+  const data=await response.json().catch(()=>({}));
+  if(!response.ok)throw new Error(data.error||'The interpreter request failed.');
+  if(!data.interpretation||typeof data.interpretation!=='object')throw new Error('The backend returned an invalid response.');
+  $('output').textContent=JSON.stringify(data.interpretation,null,2);$('copy').disabled=false;
+ }catch(error){
+  setStatus('Interpreter error\n\n'+(error.message||'Could not reach the Cherri backend.')+'\n\nCheck that the backend is deployed and OPENAI_API_KEY is configured.');
+ }finally{button.disabled=false;button.textContent='Interpret with AI';}
 }
 $('interpret').addEventListener('click',interpret);
-$('clear').addEventListener('click',()=>{['request','framing','motion','continuity','style'].forEach(id=>$(id).value='');$('output').innerHTML='<span class="empty">Your interpreted instruction will appear here. Enter a request and select “Build structured draft”.</span>';$('original').innerHTML='<span class="empty">Nothing submitted yet.</span>';$('copy').disabled=true;});
+$('clear').addEventListener('click',()=>{['request','framing','motion','continuity','style'].forEach(id=>$(id).value='');$('output').textContent='Your AI interpretation will appear here.';$('original').textContent='Nothing submitted yet.';$('copy').disabled=true;});
 $('copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText($('output').textContent);$('copy').textContent='Copied';setTimeout(()=>$('copy').textContent='Copy draft',1300);}catch(e){$('copy').textContent='Select and copy';}});
 </script>
 </body>
