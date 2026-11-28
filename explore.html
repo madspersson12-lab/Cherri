@@ -26,6 +26,34 @@ h1{font-size:clamp(2rem,5vw,3.25rem);letter-spacing:-.06em;margin:36px 0 6px}.su
 .bottom-nav{position:fixed;z-index:5;left:50%;transform:translateX(-50%);bottom:14px;width:min(620px,calc(100% - 24px));display:flex;justify-content:space-around;padding:11px;border:1px solid #ffffff30;border-radius:18px;background:#241d2bf2;box-shadow:0 12px 40px #0008;backdrop-filter:blur(18px)}.bottom-nav a{color:var(--muted);font-size:.78rem;display:flex;flex-direction:column;align-items:center;gap:4px;padding:2px 9px}.bottom-nav a.active{color:#ffb4c1}.bottom-nav b{font-size:1.05rem}
 @media(max-width:760px){.wrap{width:calc(100% - 28px)}.controls{grid-template-columns:1fr}header{height:66px}.controls{grid-template-columns:1fr 1fr}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.template{min-height:220px}.composer{padding:15px}.composer-foot{align-items:flex-start;flex-direction:column}.generate{width:100%}.section-title{align-items:start;flex-direction:column}}
 @media(max-width:520px){.header-right{gap:7px}.balance-pills{gap:5px}.balance-pill{padding:6px 8px;font-size:.72rem}.header-right>a[href='auth.html?mode=signin']{display:none}}@media(max-width:420px){.grid{grid-template-columns:1fr 1fr}.template{min-height:190px}}
+
+/* Pre-made AI model gallery */
+.models-section{margin-top:34px}
+.models-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.model-card{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:18px;background:#241d2b;min-width:0;transition:transform .18s,border-color .18s}
+.model-card:hover{transform:translateY(-3px);border-color:#ff718c99}
+.model-photo{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;background:#332735}
+.model-card-info{padding:12px}
+.model-card-info strong{display:block;font-size:.98rem}
+.model-card-info small{display:block;color:var(--muted);margin-top:4px;min-height:2.2em;line-height:1.4}
+.model-actions{display:flex;gap:7px;margin-top:11px}
+.model-action{flex:1;border:1px solid #ffffff28;border-radius:10px;padding:9px 6px;background:#ffffff08;color:var(--text);font-size:.8rem;font-weight:750;cursor:pointer}
+.model-action.primary{border-color:#ff718c88;background:#ed123025;color:#ffdce3}
+.model-card.selected{border-color:var(--pink);box-shadow:0 0 0 1px #ff718c66}
+.model-selected{display:none;align-items:center;gap:10px;margin-top:14px;padding:11px 13px;border:1px solid #ff718c77;border-radius:13px;background:#ed123018;color:#ffe0e6;font-size:.88rem}
+.model-selected.visible{display:flex}
+.model-selected img{width:38px;height:48px;object-fit:cover;border-radius:8px}
+.model-selected button{margin-left:auto;border:0;background:transparent;color:#ffb4c1;cursor:pointer;font-weight:700}
+.model-modal{position:fixed;inset:0;z-index:20;display:none;place-items:center;padding:20px;background:#08050cbb;backdrop-filter:blur(8px)}
+.model-modal.open{display:grid}
+.model-modal-panel{width:min(680px,100%);display:grid;grid-template-columns:minmax(0, .9fr) minmax(0,1.1fr);overflow:hidden;border:1px solid #ffffff30;border-radius:22px;background:#241d2b;box-shadow:0 24px 80px #0009}
+.model-modal-panel>img{width:100%;height:100%;min-height:330px;object-fit:cover}
+.model-modal-copy{padding:25px;align-self:center}
+.model-modal-copy h3{font-size:1.7rem;letter-spacing:-.04em;margin:0 0 8px}
+.model-modal-copy p{color:var(--muted);line-height:1.6}
+.model-modal-close{float:right;border:0;background:transparent;color:var(--muted);font-size:1.5rem;cursor:pointer}
+@media(max-width:760px){.models-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.model-modal-panel{grid-template-columns:1fr 1fr}.model-modal-panel>img{min-height:270px}}
+@media(max-width:480px){.model-modal-panel{grid-template-columns:1fr;max-height:90vh;overflow:auto}.model-modal-panel>img{height:260px;min-height:0}.model-modal-copy{padding:18px}}
 </style></head>
 <body><div class="wrap">
 <header><a class="brand" href="index.html"><img src="cherri-logo.svg" alt="">cherri</a><div class="header-right"><div class="balance-pills" aria-label="Your demo balance"><span class="balance-pill"><small>Cherries</small><strong id="header-cherries">0 🍒</strong></span></div><a href="credits.html">Buy more cherries</a><a href="auth.html?mode=signin">Sign in</a><a class="avatar" href="auth.html?mode=signup" aria-label="Account">♡</a></div></header>
@@ -51,7 +79,23 @@ h1{font-size:clamp(2rem,5vw,3.25rem);letter-spacing:-.06em;margin:36px 0 6px}.su
 <div class="composer-foot"><div class="credit"><strong>Estimated credits:</strong> <span id="credit-value">200 🍒</span> <span style="color:#a99aaa">· illustrative preview pricing</span></div><button class="generate" type="button" disabled><span id="generate-label">Generate 8 seconds</span> · Coming soon</button></div>
 <p class="hint">This is a design preview. Your files stay in this browser preview and are not uploaded or used to generate anything.</p>
 </section>
-<div class="section-title"><div><h2>Explore ready-made scenes</h2><p>Choose a template, then add your own reference photo.</p></div></div>
+
+<section class="models-section" aria-label="Pre-made AI models">
+ <div class="section-title"><div><h2>Meet your models</h2><p>Choose a ready-made AI character to use in your next creation.</p></div></div>
+ <div class="models-grid">
+  <article class="model-card" data-model="ava"><img class="model-photo" src="models/ava.webp" alt="Ava, blonde model with a high ponytail" loading="lazy"><div class="model-card-info"><strong>Ava</strong><small>Blonde · Sporty · Confident</small><div class="model-actions"><button class="model-action" data-view-model="ava">View</button><button class="model-action primary" data-use-model="ava">Use model</button></div></div></article>
+  <article class="model-card" data-model="sofia"><img class="model-photo" src="models/sofia.webp" alt="Sofia, brunette lifestyle model" loading="lazy"><div class="model-card-info"><strong>Sofia</strong><small>Brunette · Warm · Lifestyle</small><div class="model-actions"><button class="model-action" data-view-model="sofia">View</button><button class="model-action primary" data-use-model="sofia">Use model</button></div></div></article>
+  <article class="model-card" data-model="chloe"><img class="model-photo" src="models/chloe.webp" alt="Chloe, blonde model with blue eyes" loading="lazy"><div class="model-card-info"><strong>Chloe</strong><small>Blonde · Natural · Playful</small><div class="model-actions"><button class="model-action" data-view-model="chloe">View</button><button class="model-action primary" data-use-model="chloe">Use model</button></div></div></article>
+  <article class="model-card" data-model="mia"><img class="model-photo" src="models/mia.webp" alt="Mia, blonde selfie-style model" loading="lazy"><div class="model-card-info"><strong>Mia</strong><small>Blonde · Glam · Social</small><div class="model-actions"><button class="model-action" data-view-model="mia">View</button><button class="model-action primary" data-use-model="mia">Use model</button></div></div></article>
+  <article class="model-card" data-model="riley"><img class="model-photo" src="models/riley.webp" alt="Riley, brunette athletic model" loading="lazy"><div class="model-card-info"><strong>Riley</strong><small>Brunette · Athletic · Energetic</small><div class="model-actions"><button class="model-action" data-view-model="riley">View</button><button class="model-action primary" data-use-model="riley">Use model</button></div></div></article>
+  <article class="model-card" data-model="ella"><img class="model-photo" src="models/ella.webp" alt="Ella, blonde model in a white shirt" loading="lazy"><div class="model-card-info"><strong>Ella</strong><small>Blonde · Elegant · Friendly</small><div class="model-actions"><button class="model-action" data-view-model="ella">View</button><button class="model-action primary" data-use-model="ella">Use model</button></div></div></article>
+  <article class="model-card" data-model="luna"><img class="model-photo" src="models/luna.webp" alt="Luna, brunette outdoor lifestyle model" loading="lazy"><div class="model-card-info"><strong>Luna</strong><small>Brunette · Casual · Bright</small><div class="model-actions"><button class="model-action" data-view-model="luna">View</button><button class="model-action primary" data-use-model="luna">Use model</button></div></div></article>
+  <article class="model-card" data-model="jade"><img class="model-photo" src="models/jade.webp" alt="Jade, dark-haired alternative gamer model" loading="lazy"><div class="model-card-info"><strong>Jade</strong><small>Dark aesthetic · Gamer · Alternative</small><div class="model-actions"><button class="model-action" data-view-model="jade">View</button><button class="model-action primary" data-use-model="jade">Use model</button></div></div></article>
+ </div>
+ <div class="model-selected" id="model-selected" aria-live="polite"><img id="selected-model-thumb" src="" alt=""><span>Selected model: <strong id="selected-model-name"></strong></span><button type="button" id="clear-model">Remove</button></div>
+</section>
+<div class="model-modal" id="model-modal" role="dialog" aria-modal="true" aria-labelledby="model-modal-title"><div class="model-modal-panel"><img id="model-modal-image" src="" alt=""><div class="model-modal-copy"><button class="model-modal-close" id="model-modal-close" aria-label="Close">×</button><h3 id="model-modal-title"></h3><p id="model-modal-description"></p><button class="model-action primary" id="model-modal-use" type="button">Use this model</button></div></div></div>
+\n<div class="section-title"><div><h2>Explore ready-made scenes</h2><p>Choose a template, then add your own reference photo.</p></div></div>
 <div class="filters" role="group" aria-label="Template categories"><button class="filter active" data-filter="All">All</button><button class="filter" data-filter="New">New</button><button class="filter" data-filter="Solo">Solo</button><button class="filter" data-filter="Couples">Couples</button><button class="filter" data-filter="Cinematic">Cinematic</button><button class="filter" data-filter="Lifestyle">Lifestyle</button></div>
 <section class="grid" aria-label="Template previews">
 <article class="template" data-category="New Cinematic"><div class="art one"></div><span class="tag">New</span><div class="template-info"><strong>Golden-hour moment</strong><small>8 sec · Cinematic</small></div></article>
